@@ -39,6 +39,7 @@ export const fetchStoresNearby = async (latitude, longitude) => {
         store_name: store.storeName, // storeName → store_name に統一
         latitude: store.latitude,
         longitude: store.longitude,
+        distance: store.distance
       }));
     } catch (error) {
       console.error("店舗データの取得エラー:", error);

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { fetchVisitRecordsWithStore, deleteVisitRecords, updateVisitRecords } from "../api/visitRecord";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { formatTime } from "../utils/getFormatDateTime";
+import { formatDate } from "../utils/getFormatDateTime";
 
 const VisitRecordTable = () => {
   const [visitRecords, setVisitRecords] = useState([]);
@@ -75,6 +77,7 @@ const VisitRecordTable = () => {
             <TableRow>
               <TableCell>日付</TableCell>
               <TableCell>店名</TableCell>
+              <TableCell>作成者</TableCell>
               <TableCell>メモ</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
@@ -86,10 +89,11 @@ const VisitRecordTable = () => {
                   {editingId === record.id ? (
                     <TextField value={editDate} onChange={(e) => setEditDate(e.target.value)} size="small" />
                   ) : (
-                    record.date
+                    formatDate(record.date) + " " + formatTime(record.date)
                   )}
                 </TableCell>
                 <TableCell>{record.storeName}</TableCell>
+                <TableCell>{record.userName}</TableCell>
                 <TableCell>
                   {editingId === record.id ? (
                     <TextField value={editMemo} onChange={(e) => setEditMemo(e.target.value)} size="small" />

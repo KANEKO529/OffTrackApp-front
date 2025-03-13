@@ -22,8 +22,8 @@ export const fetchVisitRecordsWithStore = async () => {
   }
 };
 
-// 訪問記録データ作成
-export const createVisitRecord = async (submitData) => {
+// 訪問記録データ作成 フォームから
+export const createVisitRecordFromForm = async (submitData) => {
   try {
     const response = await client.post("/api/v1/visit-records/create-from-form", submitData);
     console.log("response.data of createshift():", response.data);
