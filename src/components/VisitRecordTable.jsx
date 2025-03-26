@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { fetchVisitRecordsWithStore, deleteVisitRecords, updateVisitRecords } from "../api/visitRecord";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { formatTime } from "../utils/getFormatDateTime";
 import { formatDate } from "../utils/getFormatDateTime";
+
+const NAVBAR_HEIGHT = 50; // AppBarの高さ（MUIデフォルト）
 
 const VisitRecordTable = () => {
   const [visitRecords, setVisitRecords] = useState([]);
@@ -62,15 +64,28 @@ const VisitRecordTable = () => {
   };
 
   return (
-    <>
-      <div>
-        <p>訪問記録データ</p>
-      </div>
-      <Link to="/dashboard" style={{ textDecoration: "none" }}>
-        <Button variant="outlined" color="secondary">
-          ダッシュボードへ戻る
-        </Button>
-      </Link>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        padding: 1,
+        marginTop: `${NAVBAR_HEIGHT}px`, // ✅ AppBar の高さ分だけ余白を作る
+      }}
+    >
+      <Box
+        sx={{
+          // bgcolor: "#202123", // ✅ ChatGPT のダークモード背景色
+          borderRadius: 1,    // ✅ 少し丸みをつける
+          maxWidth: 600,      // ✅ 幅を制限
+          mx: "auto",         // ✅ 中央揃え
+        }}
+      >
+        <Typography 
+          variant="h6" 
+          sx={{ fontWeight: "bold" }} // ✅ ChatGPT の明るいテキスト色
+        >
+          訪問記録データ
+        </Typography>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -116,7 +131,7 @@ const VisitRecordTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Box>
   );
 };
 

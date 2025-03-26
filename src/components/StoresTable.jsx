@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchStores, deleteStore, updateStore } from "../api/store";
+import { fetchAllStores, deleteStore, updateStore } from "../api/store";
 import { 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
-  Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions 
+  Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography
 } from "@mui/material";
 import { Link } from "react-router-dom";
+
+const NAVBAR_HEIGHT = 50; // AppBarの高さ（MUIデフォルト）
 
 
 const StoreTable = () => {
@@ -24,7 +26,7 @@ const StoreTable = () => {
     const getStores = async () => {
       try {
         setLoading(true);
-        const data = await fetchStores();
+        const data = await fetchAllStores();
         // console.log("data of fetchStores:", data);
         setStores(data);
       } catch (error) {
@@ -88,15 +90,27 @@ const StoreTable = () => {
   };
 
   return (
-    <>
-      <div>
-        <p>店舗データ</p>
-      </div>
-      <Link to="/dashboard" style={{ textDecoration: "none" }}>
-        <Button variant="outlined" color="secondary">
-            ダッシュボードへ戻る
-        </Button>
-        </Link>
+    <Box
+    sx={{
+      minHeight: "100vh",
+      padding: 1,
+      marginTop: `${NAVBAR_HEIGHT}px`
+    }}>
+      <Box
+        sx={{
+          // bgcolor: "#202123", // ✅ ChatGPT のダークモード背景色
+          borderRadius: 1,    // ✅ 少し丸みをつける
+          maxWidth: 600,      // ✅ 幅を制限
+          mx: "auto",         // ✅ 中央揃え
+        }}
+      >
+        <Typography 
+          variant="h6" 
+          sx={{ fontWeight: "bold" }} // ✅ ChatGPT の明るいテキスト色
+        >
+          店舗データ
+        </Typography>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -183,7 +197,7 @@ const StoreTable = () => {
         </DialogActions>
       </Dialog>
 
-    </>
+    </Box>
   );
 };
 

@@ -302,7 +302,7 @@ const handleStoreChange = (event, newValue) => {
             />
             <Button
               variant="outlined"
-              disabled={!!formData.latitude && !!formData.longitude}  // すでに位置情報がある場合は無効化
+              // disabled={!!formData.latitude && !!formData.longitude}  // すでに位置情報がある場合は無効化
               onClick={() => {
                 setFormData((prev) => ({
                   ...prev,
@@ -327,14 +327,6 @@ const handleStoreChange = (event, newValue) => {
           <Button type="submit" variant="contained" color="primary">
             記録を保存
           </Button>
-        </Box>
-
-        <Box sx={{ marginTop: 2 }}>
-          <Link to="/dashboard" style={{ textDecoration: "none" }}>
-            <Button variant="outlined" color="secondary">
-              ダッシュボードへ戻る
-            </Button>
-          </Link>
         </Box>
       </Paper>
     </Container>

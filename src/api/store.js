@@ -1,6 +1,6 @@
 import client from "./client";
 
-export const fetchStores = async () => {
+export const fetchAllStores = async () => {
     try {
       const response = await client.get("/api/v1/stores");
       console.log("店舗データの取得に成功しました", response)
@@ -24,6 +24,21 @@ export const fetchStores = async () => {
     }
 };
 
+export const fetchStoresByQuery = async (query) => {
+  // console.log("query:", query);
+  try {
+    const response = await client.get(`/api/v1/stores/search?query=${query}`);
+
+    // const data = await response.json(); // 🔥 `response.data` ではなく `.json()`
+    // console.log("クエリによる店舗データの取得に成功しました:", response);
+    return response.data;
+  } catch (error) {
+    console.error("クエリによる店舗データの取得に失敗しました:", error);
+    return []; // 🔥 エラー時は `undefined` ではなく `[]` を返す
+  }
+};
+
+
 // 現在地の近くの店舗を取得する
 export const fetchStoresNearby = async (latitude, longitude) => {
 
@@ -36,7 +51,7 @@ export const fetchStoresNearby = async (latitude, longitude) => {
     try {
       const response = await client.get(`api/v1/stores/nearby?latitude=${formattedLatitude}&longitude=${formattedLongitude}`);
       return response.data.map((store) => ({
-        store_name: store.storeName, // storeName → store_name に統一
+        storeName: store.storeName, // storeName → store_name に統一
         latitude: store.latitude,
         longitude: store.longitude,
         distance: store.distance
