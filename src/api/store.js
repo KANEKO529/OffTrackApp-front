@@ -1,4 +1,7 @@
 import client from "./client";
+import { toast } from "react-toastify"; 
+
+export let createNewStoreSuccessFlag=false;
 
 export const fetchAllStores = async () => {
     try {
@@ -64,41 +67,49 @@ export const fetchStoresNearby = async (latitude, longitude) => {
 
 // 新規店舗をデータベースに追加する
 export const createNewStore = async (storeData) => {
-    console.log(storeData);
 
-    try {
-      const response = await client.post("/api/v1/stores", { store: storeData });
-      if(response.status === 201){
-        console.log("正常に店舗DBに格納されました。:" + storeData.store_name );
-      }
-    } catch (error) {
-      console.error("店舗の新規作成エラー:", error);
-      alert("店舗の新規作成に失敗しました。")
+  const response = await client.post("/api/v1/stores", { store: storeData });
 
-    }
-  };
+  if (![200, 201].includes(response.status)) {
+    throw new Error(`Unexpected status: ${response.status}`);
+  }
+    
+  console.log("success create new store!")
+  createNewStoreSuccessFlag = true; // 成功フラグを立てる
+
+  return response.data.id;
+};
 
   // 店舗データを削除する関数
 export const deleteStore = async (id) => {
-    // console.log("id:", id);
-    try {
-      await client.delete(`/api/v1/stores/${id}`);
-    } catch (error) {
-      console.error("Error deleting store", error);
-      alert("店舗情報の削除に失敗しました。")
-      throw error;
+
+    const response = await client.delete(`/api/v1/stores/${id}`);
+
+    if (![200, 201].includes(response.status)) {
+      throw new Error(`Unexpected status: ${response.status}`);
     }
+
+    console.log("success delete store!")
   };
   
   // 店舗データ更新のためのAPIリクエスト
-  export const updateStore = async (id, params) => {
-    // console.log("params:", params);
-    try {
-      await client.put(`/api/v1/stores/${id}`, params);
-    } catch (error) {
-      console.error("Error deleting store", error);
-      alert("店舗情報の更新に失敗しました。")
-      throw error;
-    }
-  };
-  
+  // export const updateStore = async (id, params) => {
+  //   // console.log("params:", params);
+  //   try {
+  //     const responce = await client.put(`/api/v1/stores/${id}`, params);
+  //     if(responce.status === 200){
+  //       // console.log("正常に店舗DBに格納されました。:" + storeData.store_name );
+  //       toast.success("店舗データを更新しました");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting store", error);
+  //     toast.error("店舗情報の更新に失敗しました。")
+  //     throw error;
+  //   }
+  // };
+export const updateStore = async (id, params) => {
+  const response = await client.put(`/api/v1/stores/${id}`, params);
+  if (response.status !== 200) {
+    throw new Error("Update failed");
+  }
+};

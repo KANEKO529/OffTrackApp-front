@@ -6,8 +6,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const NAVBAR_HEIGHT = 50; // AppBarの高さ（MUIデフォルト）
-
+import { toast } from "react-toastify"; // 追加: トースト通知のインポート
 
 const StoreTable = () => {
   const [stores, setStores] = useState([]);
@@ -67,10 +66,13 @@ const StoreTable = () => {
           record.id === id ? { ...record, ...updatedStore } : record
         )
       );
-      alert("店舗情報が更新されました。");
+      toast.success("店舗情報を更新しました");
+      
       handleCloseModal();
     } catch (error) {
-      console.error("更新に失敗しました", error);
+      console.error("店舗情報更新に失敗", error);
+      toast.error("店舗情報の更新に失敗しました");
+
     }
   };
 
@@ -94,7 +96,6 @@ const StoreTable = () => {
     sx={{
       minHeight: "100vh",
       padding: 1,
-      marginTop: `${NAVBAR_HEIGHT}px`
     }}>
       <Box
         sx={{

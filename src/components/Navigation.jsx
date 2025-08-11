@@ -1,72 +1,80 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
 
-const NAVBAR_HEIGHT = "50px"; // AppBar の高さ
+import { Link } from "react-router-dom";
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+export const NAVBAR_HEIGHT = 56; // AppBar の高さ
 
 const Navigation = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ボタンを押すたびに開閉
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+  const [open, setOpen] = useState(false);
+  const sidebarRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    // ページ遷移が起きたらサイドバーを閉じる
+    setOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        open &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <>
-      {/* AppBar（ヘッダー） */}
-      <AppBar 
-        position="fixed" 
-        sx={{ 
-          zIndex: (theme) => theme.zIndex.drawer + 1, 
-          backgroundColor: "#202123",  // ChatGPT ダークモードのメイン背景色
-          height: NAVBAR_HEIGHT, // 高さを統一
-        }}
-      >
-        <Toolbar sx={{ minHeight: NAVBAR_HEIGHT }}> {/* Toolbar の高さを統一 */}
-          <IconButton edge="start" color="inherit" onClick={toggleSidebar} sx={{ mr: 2 }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div">
-            おふマップ
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <header className="border-b flex items-center h-14 px-0">
+        <div className="flex items-center relative">
+          <button
+            ref={buttonRef}
+            onClick={() => setOpen(!open)}
+            className="z-50 px-2 mx-2 bg-gray-800 text-white w-8 h-8 rounded-md"
+          >
+            {open ? <FiChevronLeft /> : <FiChevronRight />}
+          </button>
 
-      {/* Sidebar（Drawer） */}
-      <Drawer
-        anchor="left"
-        open={sidebarOpen}
-        onClose={toggleSidebar}
-        sx={{ 
-          zIndex: (theme) => theme.zIndex.appBar - 1,  // AppBar の下に配置
-        }}
-        PaperProps={{
-          sx: { 
-            top: NAVBAR_HEIGHT, // AppBar の高さ分ずらす
-            height: `calc(100% - ${NAVBAR_HEIGHT})` // AppBar に隠れないよう調整
-          }
-        }}
-      >
-        <List sx={{ width: 180}}>
-          <ListItem button component={Link} to="/dashboard" onClick={toggleSidebar} sx={{ color: "black" }}>
-            <ListItemText primary="ダッシュボード" />
-          </ListItem>
-          {/* <ListItem button component={Link} to="/visit-record-form" onClick={toggleSidebar} sx={{ color: "black" }}>
-            <ListItemText primary="訪問記録フォーム" />
-          </ListItem> */}
-          <ListItem button component={Link} to="/visit-record-form1" onClick={toggleSidebar} sx={{ color: "black" }}>
-            <ListItemText primary="訪問記録フォーム" />
-          </ListItem>
-          <ListItem button component={Link} to="/visit-records" onClick={toggleSidebar} sx={{ color: "black" }}>
-            <ListItemText primary="訪問記録表" />
-          </ListItem>
-          <ListItem button component={Link} to="/stores" onClick={toggleSidebar} sx={{ color: "black" }}>
-            <ListItemText primary="店舗表" />
-          </ListItem>
-        </List>
-      </Drawer>
+          <aside
+            ref={sidebarRef}
+            className={`fixed top-14 left-0 h-[calc(100vh-56px)] w-64 bg-gray-900 text-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out
+              ${open ? 'translate-x-0' : '-translate-x-full'}
+            `}
+          >
+            <div className="h-14 flex items-center px-4 border-b border-gray-700">
+              <p className="text-lg font-semibold">メニュー</p>
+            </div>
+            <div className="px-4 py-4 space-y-3">
+              <Link to="/" className="block text-white hover:text-blue-400 text-base">ダッシュボード</Link>
+              <Link to="/visit-record-form1" className="block text-white hover:text-blue-400 text-base">訪問記録フォーム</Link>
+              <Link to="/visit-records" className="block text-white hover:text-blue-400 text-base">訪問記録表</Link>
+              <Link to="/stores" className="block text-white hover:text-blue-400 text-base">店舗表</Link>
+            </div>
+          </aside>
+
+          <Link to="/" className="ml-4 text-2xl text-white font-logo">
+            <h1>オフまっぷ</h1>
+          </Link>
+        </div>
+      </header>
     </>
   );
 };

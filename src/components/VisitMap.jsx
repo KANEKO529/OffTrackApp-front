@@ -2,16 +2,14 @@ import React, { useEffect, useState, useContext } from "react";
 import { GoogleMap, Marker, InfoWindow, useLoadScript } from "@react-google-maps/api";
 import { fetchPlotStoreData } from "../api/visitRecord";
 import { LocationContext } from "../context/LocationContext";
-import { Paper, Typography, Box } from "@mui/material";
 
 import { useRef } from "react"; // ← 追加
 
-import Button from "@mui/material/Button"; // ← 追加
-
 import { mapStyle } from "../styles/mapStyle";
 
+import { FiMapPin } from "react-icons/fi";
 
-const NAVBAR_HEIGHT = 50; //　AppBar の高さ
+const NAVBAR_HEIGHT = 56; //　AppBar の高さ
 
 const VisitMap = () => {
   const [plotStoreData, setPlotStoreData] = useState([]);
@@ -19,8 +17,6 @@ const VisitMap = () => {
   const [mapHeight, setMapHeight] = useState(window.innerHeight - NAVBAR_HEIGHT);
 
   const [currentPosition, setCurrentPosition] = useState(null);
-
-  // const [markerRef, setMarkerRef] = useState(null);
 
   const [center, setCenter] = useState({ lat: 35.6895, lng: 139.6917 });
 
@@ -182,79 +178,69 @@ const VisitMap = () => {
           onCloseClick={() => setSelectedStore(null)}
 
         >
-          <Paper
-            elevation={3}
-            sx={{
-              padding: 1,
-              // bgcolor: "#2c2c2e", // ✅ 背景をダークモードカラーに
-              // color: "#ececf1", // ✅ 文字色を明るく
-              borderRadius: 2,
-              width: 170, // ✅ 幅を調整
-              maxHeight: 250,      // 縦の最大サイズ
-              overflowY: "auto",   // 内容がはみ出たらスクロール
-            }}
+          <div
+            className="p-2 rounded-md shadow-md w-[200px] max-h-[250px] overflow-y-auto bg-white text-black"
           >
-
-            <Typography component="p" sx={{ fontWeight: "bold", fontSize: "1.0rem" }}>
+            <p className="font-bold text-base">
               {selectedStore.storeName}
-            </Typography>
+            </p>
 
 
-            <Typography component="p" sx={{fontSize: "0.75rem" }}>
+            <p className="text-sm">
               最終訪問日: {selectedStore.lastVisitDateString} {selectedStore.lastVisitTime}
-            </Typography>
-            <Typography component="p" sx={{fontSize: "0.75rem" }}>訪問回数: {selectedStore.count}回</Typography>
+            </p>
 
-            <Typography vcomponent="p"  sx={{ mt: 1, fontWeight: "bold", fontSize: "1.0rem"  }}>
+            <p className="text-sm">
+              訪問回数: {selectedStore.count}回
+            </p>
+
+            <p className="mt-2 font-bold text-base">
               訪問記録
-            </Typography>
+            </p>
 
             {selectedStore.visit_records.length > 0 ? (
-              <Box component="ul" sx={{ padding: 0, margin: 0, listStyle: "none" }}>
+              <ul className="p-0 m-0 list-none">
                 {selectedStore.visit_records.map((record, index) => (
-                  <Box
-                    component="li"
+                  <li
                     key={index}
-                    sx={{
-                      borderBottom: "1px solid #444",
-                      paddingBottom: 1,
-                      marginBottom: 1,
-                    }}
+                    className="border-b border-[#444] pb-2 mb-2"
                   >
-                    <Typography component="p"  sx={{ fontWeight: "bold", fontSize: "0.85rem"  }}>
-                      {record.date} / {record.time} 
-                    </Typography>
-                    <Typography component="p" sx={{fontSize: "0.75rem" }}>by{record.userName}</Typography>
-                    <Typography component="p" sx={{fontSize: "0.75rem" }}>{record.memo}</Typography>
-                  </Box>
+                    <p className="font-bold text-[0.85rem]">
+                      {record.date} / {record.time}
+                    </p>
+                    <p className="text-sm">
+                      by{record.userName}
+                    </p>
+                    <p className="text-sm">
+                      {record.memo}
+                    </p>
+                  </li>
                 ))}
-              </Box>
+              </ul>
             ) : (
-              <Typography component="p" sx={{fontSize: "0.75em" }} >訪問記録がありません</Typography>
+              <p className="text-sm">
+                訪問記録がありません
+              </p>
             )}
-          </Paper>
+          </div>
+
+
         </InfoWindow>
 
         )}
       </GoogleMap>
 
-      <Button
-        variant="contained"
+      <button
         onClick={() => {
           if (mapRef.current && currentPosition) {
             mapRef.current.panTo(currentPosition);
-            mapRef.current.setZoom(12); // 👈 ここでズームを好きな倍率に調整（例：15）
+            mapRef.current.setZoom(12);
           }
         }}
-        sx={{
-          position: "absolute",
-          bottom: 20,
-          right: 10,
-          zIndex: 1
-        }}
+        className="rounded-full absolute bottom-[20px] right-[10px] z-[1] bg-gray-800 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        現在地
-      </Button>
+      <FiMapPin className="w-8 h-8" />
+      </button>
     </div>
   );
 };

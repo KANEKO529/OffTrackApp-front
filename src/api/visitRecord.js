@@ -1,5 +1,8 @@
 import client from "./client";
 
+export let createVisitRecordSuccessFlag=false;
+
+
 export const fetchVisitRecords = async () => {
     try {
       const response = await client.get("/api/v1/visit-records");
@@ -24,16 +27,21 @@ export const fetchVisitRecordsWithStore = async () => {
 
 // 訪問記録データ作成 フォームから
 export const createVisitRecordFromForm = async (submitData) => {
-  try {
-    const response = await client.post("/api/v1/visit-records/create-from-form", submitData);
-    console.log("response.data of createshift():", response.data);
 
-    return response.data;
-  } catch (error) {
-    console.error("フォームからの訪問記録に失敗しました", error);
-    throw error;
+  const response = await client.post("/api/v1/visit-records/create-from-form", submitData);
+
+  // OK: 200 or 201
+  if (![200, 201].includes(response.status)) {
+    throw new Error(`Unexpected status: ${response.status}`);
   }
+
+  createVisitRecordSuccessFlag=true;
+  console.log("success create visitReccord!")
+
+  return response.data.id;
+
 };
+
 
 export const fetchPlotStoreData = async () => {
   try {
@@ -51,12 +59,13 @@ export const fetchPlotStoreData = async () => {
   // 店舗データを削除する関数
   export const deleteVisitRecords = async (id) => {
     // console.log("id:", id);
-    try {
-      await client.delete(`/api/v1/visit-records/${id}`);
-    } catch (error) {
-      console.error("訪問記録データの削除に失敗しました", error);
-      throw error;
+    const response = await client.delete(`/api/v1/visit-records/${id}`);
+
+    if (![200, 201].includes(response.status)) {
+      throw new Error(`Unexpected status: ${response.status}`);
     }
+    console.log("success delete visitReccord!")
+
   };
   
   // 訪問記録データ更新のためのAPIリクエスト

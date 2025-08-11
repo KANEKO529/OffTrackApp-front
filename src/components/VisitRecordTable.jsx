@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import { formatTime } from "../utils/getFormatDateTime";
 import { formatDate } from "../utils/getFormatDateTime";
 
-const NAVBAR_HEIGHT = 50; // AppBarの高さ（MUIデフォルト）
-
 const VisitRecordTable = () => {
   const [visitRecords, setVisitRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +66,7 @@ const VisitRecordTable = () => {
       sx={{
         minHeight: "100vh",
         padding: 1,
-        marginTop: `${NAVBAR_HEIGHT}px`, // ✅ AppBar の高さ分だけ余白を作る
+        // ✅ AppBar の高さ分だけ余白を作る
       }}
     >
       <Box
