@@ -203,6 +203,8 @@ const VisitRecordForm1 = () => {
       })
 
       setSelected("")
+      setInputValue(""); // 入力値もクリア
+      setIsCustomStore(false); 
 
       if(isCustomStore){
         toast.success("新店舗を保存しました");
@@ -254,12 +256,22 @@ const VisitRecordForm1 = () => {
 
   return (
     
-      <div className="w-full max-w-lg mx-auto px-4">
-        <h1 className="pt-4 text-xl font-semibold text-white text-center mb-6">
+    <div className="bg-gray-100">
+      <div className="w-full max-w-lg mx-auto px-4 py-8">
+        {/* <h1 className="pt-4 text-xl font-semibold text-gray-900 text-center mb-6">
           訪問記録フォーム
-        </h1>
+        </h1> */}
+        {/* ヘッダー */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            訪問記録フォーム
+          </h1>
+          <p className="text-gray-700">
+            新しい訪問記録を入力してください
+          </p>
+        </div>
 
-        <Fieldset className="space-y-6 rounded-xl bg-white/5 p-5 sm:p-10">
+        <Fieldset className="space-y-6 rounded-xl bg-white p-5 sm:p-10 shadow-sm">
             <form onSubmit={rhfHandleSubmit(handleSubmitVisitRecord)} className="flex flex-col gap-2">
               {/* フォームの中身 */}
               <Field>
@@ -272,18 +284,16 @@ const VisitRecordForm1 = () => {
                       setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
                     })}
                     className={clsx(
-                      "mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-white",
-                      "focus:outline-none focus:ring-2 focus:ring-white/25",
+                      "mt-3 border border-gray-300 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-gray-700",
+                      "focus:outline-none focus:ring-2 focus:ring-blue-300",
                       "*:text-black",
                       ng("userName")
-                        ? "border border-red-500  placeholder-red-700 focus:ring-red-500 focus:border-red-500"
-                        : "border-none"
+                        ? "border-red-500  placeholder-red-700 focus:ring-red-500 focus:border-red-500"
+                        : ""
                     )}
 
                   >
-                    <option value="">
-                      <em>記録者を選択</em>
-                    </option>
+                    <option value="">記録者を選択</option>  {/* <em>タグを削除 */}
                     {users.map((user) => (
                       <option key={user.nickname} value={user.nickname}>
                         {user.nickname}
@@ -293,7 +303,7 @@ const VisitRecordForm1 = () => {
 
 
                   <ChevronDownIcon
-                      className="group pointer-events-none absolute top-2.5 right-2.5 size-4 fill-white/60"
+                      className="group pointer-events-none absolute top-2.5 right-2.5 size-4 fill-gray-700"
                       aria-hidden="true"
                   />
                 </div>
@@ -308,8 +318,9 @@ const VisitRecordForm1 = () => {
               {/* 店名選択 or 新規登録 */}
               {!isCustomStore ? (
                 <Field>
+
+
                     <Combobox 
-                      name="storeName"
 
                       value={selected} // 選択された値を保持
                       onChange={(value) => {
@@ -321,40 +332,52 @@ const VisitRecordForm1 = () => {
                         } else if (value) {
                           setInputValue(value.store_name); // 入力欄も選択値に更新
                         }
+
+                        // setValue("storeName", value.store_name, { shouldValidate: true }); // 手動更新
+
+                        if (typeof value === 'string') {
+                          setValue("storeName", value, { shouldValidate: true, shouldDirty: true });
+                        } else if (value) {
+                          setValue("storeName", value.store_name, { shouldValidate: true, shouldDirty: true });
+                        }
+
                       }}
-                      onClose={() => setInputValue('')}
+                      // onClose={() => setInputValue('')}
                     >
-                      <Label className="text-sm font-medium text-white">訪問先店舗</Label>
+                      <Label className="text-sm font-medium text-gray-700">訪問先店舗</Label>
 
                       <div className="relative">
 
                         <ComboboxInput
                           id="storeName"
+                          name="storeName"
+                          value={inputValue} // これが必要！
                           aria-invalid={ng("storeName") ? "true" : "false"}
                           {...register("storeName", {
                             required: "必須入力",
                             setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
                           })}
                           className={clsx(
-                            "mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-white",
-                            "focus:outline-none focus:ring-2 focus:ring-white/25",
-                            "*:text-black",
+                            "border border-gray-300 mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-gray-900",
+                            "focus:outline-none focus:ring-2 focus:ring-blue-300",
+                            "",
                             ng("storeName")
-                              ? "border border-red-500  placeholder-gray focus:ring-red-500 focus:border-red-500"
-                              : "border-none"
+                              ? "border-red-500  placeholder-gray focus:ring-red-500 focus:border-red-500"
+                              : ""
                           )}
                           displayValue={(option) =>
                             typeof option === 'string' ? option : option?.store_name || ''
                           }
                           onChange={(e) => {
                             setInputValue(e.target.value);
+                            setValue("storeName", e.target.value, { shouldValidate: true }); // 手動更新
                           }}
                           autoComplete="off"
                         />
 
-                          <ComboboxButton className="bg-white/5 absolute right-2 top-1/2 -translate-y-1/2 p-1 flex items-center justify-center hover:bg-green-800">
+                          <ComboboxButton className="bg-white absolute right-2 top-1/2 -translate-y-1/2 p-1 flex items-center justify-center hover:bg-white">
                             <ChevronDownIcon
-                              className="size-4 fill-white/60 pointer-events-none"
+                              className="size-4 fill-gray-700 pointer-events-none"
                               aria-hidden="true"
                             />
                           </ComboboxButton>
@@ -370,7 +393,7 @@ const VisitRecordForm1 = () => {
                         anchor="bottom"
                         transition
                         className={clsx(
-                          'w-[250px] h-[150px] rounded-xl border border-white/5 bg-gray-900 p-1 [--anchor-gap:--spacing(1)] empty:invisible z-50',
+                          'w-[250px] h-[150px] rounded-xl border border-white/5 bg-gray-700 p-1 [--anchor-gap:--spacing(1)] empty:invisible z-50',
                           'transition duration-100 ease-in data-leave:data-closed:opacity-0'
                         )}
                       >
@@ -389,7 +412,7 @@ const VisitRecordForm1 = () => {
                     </Combobox>
 
                     <Button
-                      className="mt-4 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                      className="mt-4 w-full focus:outline-none text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-700"
                       onClick={() => setIsCustomStore(true)}
                     >
                       新しい店舗で登録
@@ -398,9 +421,14 @@ const VisitRecordForm1 = () => {
                 </Field>
               ) : (
                 <div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                    <h3 className="text-sm font-medium text-blue-800 mb-2">新規店舗登録</h3>
+                    <p className="text-xs text-blue-600">新しい店舗情報を入力してください</p>
+                  </div>
+
                   <Field>
                     <div className="my-2 min-w-[120px]">
-                      <Label htmlFor="storeName" className="block text-sm font-medium text-white mb-1">
+                      <Label htmlFor="storeName" className="block text-sm font-medium text-gray-700 mb-1">
                         新しい店舗名
                       </Label>
                       <Input
@@ -414,12 +442,12 @@ const VisitRecordForm1 = () => {
                           setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
                         })}
                         className={clsx(
-                          "mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-white",
-                          "focus:outline-none focus:ring-2 focus:ring-white/25",
+                          "border border-gray-300 mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-gray-900",
+                          "focus:outline-none focus:ring-2 focus:ring-blue-300",
                           "*:text-black",
                           ng("storeName")
                             ? "border border-red-500  placeholder-gray focus:ring-red-500 focus:border-red-500"
-                            : "border-none"
+                            : ""
                         )}
                         placeholder="店舗名を入力"
                       />
@@ -435,7 +463,7 @@ const VisitRecordForm1 = () => {
 
                     {/* 緯度入力フィールド */}
                     <div className="my-2 min-w-[120px]">
-                      <Label htmlFor="latitude" className="block text-sm font-medium text-white mb-1">
+                      <Label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-1">
                         緯度
                       </Label>
                       <Input
@@ -450,12 +478,12 @@ const VisitRecordForm1 = () => {
                           setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
                         })}
                         className={clsx(
-                          "mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-white",
-                          "focus:outline-none focus:ring-2 focus:ring-white/25",
+                          "border border-gray-300 mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-gray-900",
+                          "focus:outline-none focus:ring-2 focus:ring-blue-300",
                           "*:text-black",
                           ng("latitude")
                             ? "border border-red-500  placeholder-gray focus:ring-red-500 focus:border-red-500"
-                            : "border-none"
+                            : ""
                         )}
                         placeholder="緯度を入力"
                       />
@@ -470,7 +498,7 @@ const VisitRecordForm1 = () => {
                   <Field>
                     {/* 経度入力フィールド */}
                     <div className="my-2 min-w-[120px]">
-                      <Label htmlFor="longitude" className="block text-sm font-medium text-white mb-1">
+                      <Label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-1">
                         経度
                       </Label>
                       <Input
@@ -485,12 +513,12 @@ const VisitRecordForm1 = () => {
                           setValueAs: (v) => (typeof v === "string" ? v.trim() : v),
                         })}
                         className={clsx(
-                          "mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-white",
-                          "focus:outline-none focus:ring-2 focus:ring-white/25",
+                          "border border-gray-300 mt-3 block w-full rounded-lg px-3 py-1.5 text-md appearance-none bg-white/5 text-gray-900",
+                          "focus:outline-none focus:ring-2 focus:ring-blue-300",
                           "*:text-black",
                           ng("longitude")
                             ? "border border-red-500  placeholder-gray focus:ring-red-500 focus:border-red-500"
-                            : "border-none"
+                            : ""
                         )}
                         placeholder="経度を入力"
                       />
@@ -508,7 +536,7 @@ const VisitRecordForm1 = () => {
                       <Button
                         type="button"
                         onClick={() => setIsCustomStore(false)}
-                        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                        className="focus:outline-none text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         既存店舗の選択
                       </Button>
@@ -519,7 +547,7 @@ const VisitRecordForm1 = () => {
                           setValue("latitude", location.lat);
                           setValue("longitude", location.lng);
                         }}
-                        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                        className="focus:outline-none text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-500 dark:hover:bg-green-700 dark:focus:ring-green-800"
                       >
                         現在地自動入力
                       </Button>
@@ -531,7 +559,7 @@ const VisitRecordForm1 = () => {
               )}
 
               <Field>
-                <Label className="text-sm font-medium text-white">仕入れ金額</Label>
+                <Label className="text-sm font-medium text-gray-700">仕入れ金額</Label>
                 <Input
                   type="number"
                   name="price"
@@ -545,8 +573,8 @@ const VisitRecordForm1 = () => {
                   })}
                   onChange={handleChange}
                   className={clsx(
-                    'mt-3 block w-full rounded-lg border-none bg-white/5 px-3 py-1.5 text-md text-white',
-                    'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
+                    'border border-gray-300 mt-3 block w-full rounded-lg bg-white/5 px-3 py-1.5 text-md text-gray-900 appearance-none',
+                    'focus:outline-none focus:ring-2 focus:ring-blue-300'
                   )}
                 />
                 {ng("price") && (
@@ -557,7 +585,7 @@ const VisitRecordForm1 = () => {
               </Field>
 
               <Field>
-                <Label className="text-sm/6 font-medium text-white">メモ</Label>
+                <Label className="text-sm/6 font-medium text-gray-700">メモ</Label>
 
                 <Textarea
                   name="memo"
@@ -568,22 +596,26 @@ const VisitRecordForm1 = () => {
                   })}
                   onChange={handleChange}
                   className={clsx(
-                    'mt-3 block w-full resize-none rounded-lg border-none bg-white/5 px-3 py-1.5 text-md text-white',
-                    'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25'
+                    'border border-gray-300 mt-3 block w-full resize-none rounded-lg bg-white px-3 py-1.5 text-md text-gray-900 appearance-none',
+                    'focus:outline-none focus:ring-2 focus:ring-blue-300'
                   )}
-                  rows={3}
+                  rows={2}
                 />
               </Field>
 
               <Button
                 type="submit"
-                className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                className="my-10 focus:outline-none text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              // className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
                 記録を保存
               </Button>
           </form>
         </Fieldset>
     </div>
+
+
+    </div>  
   );
 };
 

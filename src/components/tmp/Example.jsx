@@ -69,6 +69,43 @@ const Example = () => {
     isSubmitted && !errors[field] && String(getValues(field) ?? "").trim().length > 0;
   const ng = (field) => isSubmitted && !!errors[field];
 
+    const [filter, setFilter] = useState({
+    period: "custom",
+    creator: "",
+    keyword: ""
+  });
+
+  const [records, setRecords] = useState([
+    {
+      id: 1,
+      storeName: "新宿店",
+      date: "2024-01-15",
+      creator: "佐藤 美里",
+      price: 8500,
+      memo: "定期メンテナンスを実施。機器の調子は良好です。"
+    },
+    {
+      id: 2,
+      storeName: "銀座本店",
+      date: "2024-01-15",
+      creator: "佐藤 美里",
+      price: 12000,
+      memo: "新製品設置。"
+    }
+  ]);
+
+  const handleExport = () => {
+    console.log("Export CSV");
+  };
+
+  const handleEdit = (record) => {
+    console.log("Edit", record);
+  };
+
+  const handleDelete = (id) => {
+    setRecords(records.filter((r) => r.id !== id));
+  };
+
   return (
     <>
       <div>
@@ -101,6 +138,36 @@ const Example = () => {
           <button onClick={() => toast.style('sonota')}>
           Notify!!!
         </button>
+
+    <div className="border-b py-3 flex flex-col gap-1">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">aiueko</h3>
+        <div className="flex gap-2">
+          <button onClick={() => onEdit(record)}>✏️</button>
+          <button onClick={() => onDelete(record.id)}>🗑️</button>
+        </div>
+      </div>
+      <div className="text-sm text-gray-500">{record.date}</div>
+      <div className="text-sm">
+        <span className="mr-2">記録作成者:</span>{record.creator}
+      </div>
+      <div className="text-blue-600 font-bold">¥{record.price.toLocaleString()}</div>
+      <p className="text-sm">{record.memo}</p>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* name */}

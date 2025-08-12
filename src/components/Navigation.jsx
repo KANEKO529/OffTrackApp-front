@@ -43,7 +43,7 @@ const Navigation = () => {
 
   return (
     <>
-      <header className="border-b flex items-center h-14 px-0">
+      <header className="border-b border-gray-800 flex items-center h-14 px-0">
         <div className="flex items-center relative">
           <button
             ref={buttonRef}
@@ -55,7 +55,7 @@ const Navigation = () => {
 
           <aside
             ref={sidebarRef}
-            className={`fixed top-14 left-0 h-[calc(100vh-56px)] w-64 bg-gray-900 text-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out
+            className={`fixed top-14 left-0 h-[calc(100vh-56px)] w-64 bg-gray-900 text-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out
               ${open ? 'translate-x-0' : '-translate-x-full'}
             `}
           >
